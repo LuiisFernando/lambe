@@ -3,11 +3,13 @@ import thunk from 'redux-thunk'
 
 import userReducer from './reducers/user'
 import postsReducer from './reducers/posts'
+import messageReducer from './reducers/message'
 
 //creating variable to combine all reducers of application
 const reducers = combineReducers({
     user: userReducer,
-    posts: postsReducer
+    posts: postsReducer,
+    message: messageReducer
 })
 
 const storeConfig = () => {

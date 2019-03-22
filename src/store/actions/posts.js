@@ -4,6 +4,7 @@ import {
     CREATING_POSTS,
     POST_CREATED 
 } from './actionTypes'
+import { setMessage } from './message' 
 
 import axios from 'axios'
 
@@ -23,14 +24,26 @@ export const addPost = post => {
                 image: post.image.base64
             }
         })
-            .catch(err => console.log(err))
+            .catch(err => {
+                // if get some error dispatching to update view and setMessage with error
+                dispatch(setMessage({
+                    title: 'Erro',
+                    text: 'Ocorreu um erro inesperado!'
+                }))
+            })
             .then(res => {
                 // taking the return of function on firebase with url of image
                 post.image = res.data.imageUrl
                 
                 // posting to post.json
                 axios.post('/posts.json', { ...post })
-                    .catch(err => console.log(err))
+                    .catch(err => {
+                        // if get some error dispatching to update view and setMessage with error
+                        dispatch(setMessage({
+                            title: 'Erro',
+                            text: err
+                        }))
+                    })
                     .then(res => {
                         dispatch(fetchPosts())
                         dispatch(postCreated())
@@ -42,14 +55,26 @@ export const addPost = post => {
 export const addComment = payload => {
     return dispatch => {
         axios.get(`/posts/${payload.postId}.json`)
-            .catch(err => console.log(err))
+            .catch(err => {
+                // if get some error dispatching to update view and setMessage with error
+                dispatch(setMessage({
+                    title: 'Erro',
+                    text: 'Ocorreu um erro inesperado!'
+                }))
+            })
             .then(res => {
                 const comments = res.data.comments || []
                 comments.push(payload.comment)
 
                 // update some attributes of object, in this case update only comments
                 axios.patch(`/posts/${payload.postId}.json`, { comments })
-                    .catch(err => console.log(err))
+                    .catch(err => {
+                        // if get some error dispatching to update view and setMessage with error
+                        dispatch(setMessage({
+                            title: 'Erro',
+                            text: 'Ocorreu um erro inesperado ao salvar o comentário!'
+                        }))
+                    })
                     .then(res => {
                         dispatch(fetchPosts())
                     })
@@ -67,7 +92,13 @@ export const setPosts = posts => {
 export const fetchPosts = () => {
     return dispatch => {
         axios.get('/posts.json')
-            .catch(err => console.log(err))
+            .catch(err => {
+                // if get some error dispatching to update view and setMessage with error
+                dispatch(setMessage({
+                    title: 'Erro',
+                    text: 'Ocorreu um erro inesperado ao recuperar as informações!'
+                }))
+            })
             .then(res => {
                 const rawPosts = res.data
                 const posts = []
