@@ -38,7 +38,6 @@ export const addPost = post => {
                 // posting to post.json
                 axios.post('/posts.json', { ...post })
                     .catch(err => {
-                        // if get some error dispatching to update view and setMessage with error
                         dispatch(setMessage({
                             title: 'Erro',
                             text: err
@@ -69,7 +68,6 @@ export const addComment = payload => {
                 // update some attributes of object, in this case update only comments
                 axios.patch(`/posts/${payload.postId}.json`, { comments })
                     .catch(err => {
-                        // if get some error dispatching to update view and setMessage with error
                         dispatch(setMessage({
                             title: 'Erro',
                             text: 'Ocorreu um erro inesperado ao salvar o comentário!'

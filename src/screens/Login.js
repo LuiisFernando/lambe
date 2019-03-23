@@ -14,7 +14,7 @@ import commonStyle from '../commonStyle'
 
 class Login extends Component {
     state = {
-        name: 'temp',
+        name: '',
         email: '',
         password: '',
     }
