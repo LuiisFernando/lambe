@@ -9,7 +9,7 @@ import { setMessage } from "./message";
 
 
 const authBaseURL = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty'
-const API_KEY = "API_KEY";
+const API_KEY = 'API_KEY'
 
 export const userLogged = user => {
     return {
@@ -26,6 +26,7 @@ export const logout = () => {
 
 export const createUser = (user) => {
     return dispatch => {
+        dispatch(loadingUser())
         axios.post(`${authBaseURL}/signupNewUser?key=${API_KEY}`,
             {
               email: user.email,
@@ -33,7 +34,7 @@ export const createUser = (user) => {
               returnSecureToken: true
             })
           .catch(err => {
-            // if get some error dispatching to update view and setMessage with error
+            // if get some error dispatching to update ui and setMessage with error
             dispatch(setMessage({
               title: 'Erro',
               text: 'Ocorreu um erro inesperado!'
@@ -45,18 +46,17 @@ export const createUser = (user) => {
                   name: user.name 
                 })
                 .catch(err => {
-                  // if get some error dispatching to update view and setMessage with error
+                  // if get some error dispatching to update ui and setMessage with error
                   dispatch(setMessage({
                     title: 'Erro',
                     text: 'Ocorreu um erro inesperado!'
                   }))
                 })
                 .then(res => {
-                  // if get some error dispatching to update view and setMessage with error
-                  dispatch(setMessage({
-                    title: 'Sucesso',
-                    text: 'Usuário criado com sucesso!'
-                  }))
+                  delete user.password
+                  user.name = res.data.name
+                  dispatch(userLogged(user)) //dispatching to update ui
+                  dispatch(userLoaded()) //dispatching to update ui
                 });
             }
           });
@@ -92,18 +92,18 @@ export const login = user => {
         }))
       })
       .then(res => {
-        if (res.data.localId) { 
+        if (res.data && res.data.localId) { 
           axios.get(`/users/${res.data.localId}.json`)
             .catch(err => {
-              // if get some error dispatching to update view and setMessage with error
               dispatch(setMessage({
                 title: 'Erro',
                 text: 'Ocorreu um erro inesperado!'
               }))
             })
-            .then(res => {
-              	user.password = null
-                user.name = res.data.name
+            .then(resp => {
+                delete user.password
+                user.name = resp.data.name
+                user.id = res.data.localId
                 dispatch(userLogged(user))
                 dispatch(userLoaded())
             })
