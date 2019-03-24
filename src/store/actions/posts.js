@@ -8,10 +8,10 @@ import { setMessage } from './message'
 
 import axios from 'axios'
 
-//method called or dispatch called the ui will updated
-
 export const addPost = post => {
-    return dispatch => {
+    // redux-thunk send 2 parameters (dispatch and getState)
+    // getState is globalState of app (never update the globalState, just read) update dispatching
+    return (dispatch, getState) => {
         // call the action creatingPost to update the view if necessary
         dispatch(creatingPost())
 
@@ -36,7 +36,7 @@ export const addPost = post => {
                 post.image = res.data.imageUrl
                 
                 // posting to post.json
-                axios.post('/posts.json', { ...post })
+                axios.post(`/posts.json?auth=${getState().user.token}`, { ...post })
                     .catch(err => {
                         dispatch(setMessage({
                             title: 'Erro',
@@ -52,7 +52,7 @@ export const addPost = post => {
 }
 
 export const addComment = payload => {
-    return dispatch => {
+    return (dispatch, getState) => {
         axios.get(`/posts/${payload.postId}.json`)
             .catch(err => {
                 // if get some error dispatching to update view and setMessage with error
@@ -66,8 +66,10 @@ export const addComment = payload => {
                 comments.push(payload.comment)
 
                 // update some attributes of object, in this case update only comments
-                axios.patch(`/posts/${payload.postId}.json`, { comments })
+                axios.patch(`/posts/${payload.postId}.json?auth=${getState().user.token}`, { comments })
                     .catch(err => {
+                        const teste = getState().user.token
+                        debugger
                         dispatch(setMessage({
                             title: 'Erro',
                             text: 'Ocorreu um erro inesperado ao salvar o comentário!'
