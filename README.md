@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.imgsafe.org/2f/2fdb8c6874.gif">
+  <img src="https://media.giphy.com/media/dv1DnzUMU1VvKXkGfq/giphy.gif">
 </p>
 
 # lambe
